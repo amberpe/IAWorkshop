@@ -23,7 +23,6 @@ Resources:
       Environment:
         Variables:
           DYNAMODB_TABLE: "chatbot-amber-repo"
-          AWS_REGION: "us-east-1"
       Events:
         TwilioWebhook:
           Type: Api
