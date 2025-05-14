@@ -65,21 +65,21 @@ def converse():
                 },
                 "required": ["name", "phone", "email", "interest"]
             }
-        },
-        {
-            "name": "search_recommendations",
-            "description": "Busca recomendaciones basadas en la necesidad del usuario.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "interest": {
-                        "type": "string",
-                        "description": "La necesidad del usuario."
-                    }
-                },
-                "required": ["interest"]
-            }
         }
+        # ,{
+        #     "name": "search_recommendations",
+        #     "description": "Busca recomendaciones basadas en la necesidad del usuario.",
+        #     "parameters": {
+        #         "type": "object",
+        #         "properties": {
+        #             "interest": {
+        #                 "type": "string",
+        #                 "description": "La necesidad del usuario."
+        #             }
+        #         },
+        #         "required": ["interest"]
+        #     }
+        # }
     ]
     
     # Cliente de bedrock
@@ -87,30 +87,31 @@ def converse():
     
     # Llamar a bedrock
     response = bedrock.invoke_model(
-            modelId="anthropic.claude-3-5-sonnet-20241022-v2:0",
-            body={
+            modelId="us.anthropic.claude-3-5-sonnet-20241022-v2:0",
+            body=json.dumps({
             "anthropic_version": "bedrock-2023-05-31",
             'max_tokens': 524,
             'messages': messages,
             'temperature': 0,
+            #'tools': tools,
             'system': """Eres un agente llamado Workshopcito y trabajas como ayudante de ventas en la empresa IA Ventas.
 La empresa IA Ventas es una tienda retail que vende productos físicos como flores, ferretería, libros, entre otros.
 Tu tarea principal es proporcionar atención al cliente 24/7, asesorar sobre productos, responder preguntas, hacer seguimientos
 de leads y mejorar las ventas mediante un servicio eficiente, siempre dentro del marco de la seguridad y la privacidad de la empresa.
 
+Si un cliente muestra interés en realizar una compra, realiza un seguimiento automático para asegurar que no se pierdan oportunidades.       
+
 Tu tono debe ser amigable, profesional y útil. Debes adaptarte al tono de la empresa y comunicarte de manera clara y concisa. Siempre mantén un enfoque en el cliente y su experiencia, evitando respuestas demasiado formales o impersonales. Usa emojis.
-""",
-            'tools': tools
-        }
+"""
+        })
         )
     
-    mensaje = response["body"].read().decode("utf-8")
-    print(mensaje)
+    mensaje = json.loads(response["body"].read().decode("utf-8"))
     
     # metrics.add_metric(name="IncomingMessage", unit=MetricUnit.Count, value=1)
     return {
         "statusCode": 200,
-        "body": "pong"
+        "body": mensaje
     }
 
 # Enrich logging with contextual information from Lambda

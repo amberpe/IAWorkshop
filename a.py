@@ -8,4 +8,4 @@ response = requests.post('http://127.0.0.1:3000/converse', json = {
     ]
 })
 
-print(response)
+print(response.json())
