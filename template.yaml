@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Workshop IA Amber
+
+Resources:
+  ChatbotFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: main.lambda_handler
+      Runtime: python3.12
+      CodeUri: src
+      MemorySize: 256
+      Timeout: 900
+      Policies:
+        - AmazonDynamoDBFullAccess
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeEndpoint
+                - bedrock:InvokeModel
+              Resource: "*"
+      Environment:
+        Variables:
+          DYNAMODB_TABLE: "chatbot-amber-repo"
+          AWS_REGION: "us-east-1"
+      Events:
+        TwilioWebhook:
+          Type: Api
+          Properties:
+            Path: /converse
+            Method: POST
+
+Outputs:
+  ApiGatewayInvokeURL:
+    Description: "URL de invocación para la API en API Gateway"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"

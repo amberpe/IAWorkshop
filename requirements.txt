@@ -1,0 +1,4 @@
+streamlit
+websockets
+python-dotenv
+boto3
