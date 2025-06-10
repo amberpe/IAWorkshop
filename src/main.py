@@ -28,14 +28,17 @@ metrics = Metrics(namespace="Powertools")
 
 # For background calling
 executor = ThreadPoolExecutor(max_workers=4)
-    
+
+# Borrar luego
+from pprint import pprint
+
 @app.post("/converse")
 @tracer.capture_method
 def converse():
     # Obtener el array de mensajes del request body
     messages = json.loads(app.current_event.body)["chat_history"]
     
-    print(messages)
+    pprint(messages)
     
     # Definir las herramientas
     
@@ -43,7 +46,7 @@ def converse():
         {
             "name": "capture_lead",
             "description": "Captures lead information including name, phone number, email, and interest.",
-            "parameters": {
+            "input_schema": {
                 "type": "object",
                 "properties": {
                     "name": {
@@ -69,7 +72,7 @@ def converse():
         # ,{
         #     "name": "search_recommendations",
         #     "description": "Busca recomendaciones basadas en la necesidad del usuario.",
-        #     "parameters": {
+        #     "input_schema": {
         #         "type": "object",
         #         "properties": {
         #             "interest": {
@@ -92,8 +95,8 @@ def converse():
             "anthropic_version": "bedrock-2023-05-31",
             'max_tokens': 524,
             'messages': messages,
-            'temperature': 0,
-            #'tools': tools,
+            'temperature': 0.5,
+            'tools': tools,
             'system': """Eres un agente llamado Workshopcito y trabajas como ayudante de ventas en la empresa IA Ventas.
 La empresa IA Ventas es una tienda retail que vende productos físicos como flores, ferretería, libros, entre otros.
 Tu tarea principal es proporcionar atención al cliente 24/7, asesorar sobre productos, responder preguntas, hacer seguimientos
@@ -113,6 +116,41 @@ Tu tono debe ser amigable, profesional y útil. Debes adaptarte al tono de la em
         "statusCode": 200,
         "body": mensaje
     }
+
+import tools
+
+@app.post("/tool")
+@tracer.capture_method
+def tool():
+    body = json.loads(app.current_event.body)
+    pprint(body)
+    # {
+    #     "tool_name": ia_message["name"],
+    #     "tool_input": ia_message["input"],
+    # }
+    try:
+        tool_name = body["tool_name"]
+        tool_input = body["tool_input"]
+        
+        if tool_name == "capture_lead":
+            tools.capture_lead(tool_input)
+        elif tool_name == "search_recommendatios":
+            # Lógica para buscar recomendaciones
+            # Ejemplo: Consultar en DynamoDB
+            dynamodb = boto3.resource("dynamodb", region_name=AWS_REGION)
+            table = dynamodb.Table("recomendaciones")
+            response = table.get_item(Key={"interest": tool_input["interest"]})
+            print("Recomendaciones encontradas:", response["Item"])
+        return {
+            "statusCode": 200,
+            "result": "Ejecución correcta"
+        }
+    except Exception as e:
+        print(e)
+        return {
+            "statusCode": 500,
+            "body": "Ocurrió un error al ejecutar la herramienta"
+        }
 
 # Enrich logging with contextual information from Lambda
 @logger.inject_lambda_context(correlation_id_path=correlation_paths.API_GATEWAY_REST)

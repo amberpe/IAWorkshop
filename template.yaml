@@ -22,13 +22,29 @@ Resources:
               Resource: "*"
       Environment:
         Variables:
-          DYNAMODB_TABLE: "chatbot-amber-repo"
+          DYNAMODB_TABLE: "workshop-leads"
       Events:
         TwilioWebhook:
           Type: Api
           Properties:
             Path: /converse
             Method: POST
+        ToolEndpoint:
+          Type: Api
+          Properties:
+            Path: /tool
+            Method: POST
+  ChatbotAmberRepoTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: workshop-leads
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
 
 Outputs:
   ApiGatewayInvokeURL:
