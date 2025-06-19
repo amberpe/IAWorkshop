@@ -119,10 +119,11 @@ def converse():
     </tool>
   </tools>
   <rules>
+    <rule>Solo responde preguntas relevantes a tus funciones.</rule>
     <rule>Siempre saluda al inicio como iBot.</rule>
     <rule>No menciones herramientas ni APIs.</rule>
     <rule>Si no sabes algo, pide aclaración o deriva a humano.</rule>
-    <rule>Detecta datos personales y ejecuta guardar_lead sin notificar.</rule>
+    <rule>Detecta datos personales y ejecuta capture_lead sin notificar.</rule>
   </rules>
   <example>
     <user>Hola</user>
