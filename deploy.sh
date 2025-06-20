@@ -1,4 +1,4 @@
-sudo yum install python3.11
+sudo yum install python3.11 -y
 python3.11 -m ensurepip --upgrade
 sam build
-sam deploy
+sam deploy --no-confirm
