@@ -7,6 +7,7 @@ st.set_page_config(page_title="Workshop IA", page_icon="🤖")
 st.title("🤖 Mi primer agente de IA en AWS!")
 
 params = dict(st.query_params)
+print(params)
 
 if 'ServerlessRestApi' in params and 'Region' in params:
     BACKEND_URL = f"https://{params['ServerlessRestApi']}.execute-api.{params['Region']}.amazonaws.com/Prod"

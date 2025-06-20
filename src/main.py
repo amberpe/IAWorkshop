@@ -6,6 +6,7 @@ from aws_lambda_powertools                  import Metrics
 from aws_lambda_powertools                  import Logger
 from aws_lambda_powertools                  import Tracer
 from concurrent.futures                     import ThreadPoolExecutor
+import boto3
 import json
 
 AWS_REGION = "us-east-1"
