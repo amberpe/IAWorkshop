@@ -7,7 +7,6 @@ st.set_page_config(page_title="Workshop IA", page_icon="🤖")
 st.title("🤖 Mi primer agente de IA en AWS!")
 
 params = dict(st.query_params)
-print(params)
 
 if 'ServerlessRestApi' in params and 'Region' in params:
     BACKEND_URL = f"https://{params['ServerlessRestApi']}.execute-api.{params['Region']}.amazonaws.com/Prod"
@@ -32,8 +31,6 @@ if 'ServerlessRestApi' in params and 'Region' in params:
 
     # Chat input
     if user_input := st.chat_input("Escribe tu mensaje..."):
-        print(st.session_state.chat_history)
-        print()
 
         # Añadir mensaje del usuario
         st.session_state.chat_history.append({
@@ -65,7 +62,6 @@ if 'ServerlessRestApi' in params and 'Region' in params:
                 "chat_history": st.session_state.chat_history[:-1],  # Excluye el último mensaje vacío del bot
             })
             response = response.json()
-            print(response)
             for ia_message in response["body"]["content"]:
                 if ia_message["type"] == "text":
                     for chunk in ia_message["text"].split():
