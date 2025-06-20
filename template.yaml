@@ -48,5 +48,5 @@ Resources:
 
 Outputs:
   ApiGatewayInvokeURL:
-    Description: "URL de invocación para la API en API Gateway"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
+    Description: "Aquí podrás probar tu bot!"
+    Value: !Sub "http://52.203.35.197:8501/?ServerlessRestApi=${ServerlessRestApi}&Region=${AWS::Region}"

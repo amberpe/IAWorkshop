@@ -6,8 +6,6 @@ from aws_lambda_powertools                  import Metrics
 from aws_lambda_powertools                  import Logger
 from aws_lambda_powertools                  import Tracer
 from concurrent.futures                     import ThreadPoolExecutor
-import boto3
-import os
 import json
 
 AWS_REGION = "us-east-1"
@@ -45,7 +43,7 @@ def converse():
     tools = [
         {
             "name": "capture_lead",
-            "description": "Captures lead information including name, phone number, email, and interest.",
+            "description": "Captures lead information including name, phone number and interest.",
             "input_schema": {
                 "type": "object",
                 "properties": {
@@ -57,32 +55,14 @@ def converse():
                         "type": "string",
                         "description": "El número telefónico de la persona. Usualmente será de Perú"
                     },
-                    "email": {
-                        "type": "string",
-                        "description": "El email de la persona interesada."
-                    },
                     "interest": {
                         "type": "string",
                         "description": "La necesidad del usuario."
                     }
                 },
-                "required": ["name", "phone", "email", "interest"]
+                "required": ["name", "phone", "interest"]
             }
         }
-        # ,{
-        #     "name": "search_recommendations",
-        #     "description": "Busca recomendaciones basadas en la necesidad del usuario.",
-        #     "input_schema": {
-        #         "type": "object",
-        #         "properties": {
-        #             "interest": {
-        #                 "type": "string",
-        #                 "description": "La necesidad del usuario."
-        #             }
-        #         },
-        #         "required": ["interest"]
-        #     }
-        # }
     ]
     
     # Cliente de bedrock
@@ -130,12 +110,12 @@ def converse():
     <assistant>¡Hola! 👋 Soy *iBot*, tu asistente en *Amber Store* 🍏. ¿En qué puedo ayudarte hoy?</assistant>
   </example>
 </agent>"""
-        })
+            })
         )
     
     mensaje = json.loads(response["body"].read().decode("utf-8"))
     
-    # metrics.add_metric(name="IncomingMessage", unit=MetricUnit.Count, value=1)
+    metrics.add_metric(name="IncomingMessage", unit=MetricUnit.Count, value=1)
     return {
         "statusCode": 200,
         "body": mensaje
@@ -147,11 +127,6 @@ import tools
 @tracer.capture_method
 def tool():
     body = json.loads(app.current_event.body)
-    pprint(body)
-    # {
-    #     "tool_name": ia_message["name"],
-    #     "tool_input": ia_message["input"],
-    # }
     try:
         tool_name = body["tool_name"]
         tool_input = body["tool_input"]

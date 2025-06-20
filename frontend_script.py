@@ -1,17 +1,16 @@
 import streamlit as st
-import asyncio
-import json
-import os
 import requests
 import time
 from pprint import pprint
-from dotenv import load_dotenv
-load_dotenv()
 
 st.set_page_config(page_title="Workshop IA", page_icon="🤖")
 st.title("🤖 Mi primer agente de IA en AWS!")
 
-if BACKEND_URL := st.text_input("Ingresa el link de la API que desplegamos previamente! :D"):
+params = dict(st.query_params)
+
+if 'ServerlessRestApi' in params and 'Region' in params:
+    BACKEND_URL = f"https://{params['ServerlessRestApi']}.execute-api.{params['Region']}.amazonaws.com/Prod"
+    
     # Inicializa historial si no existe
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
@@ -100,7 +99,6 @@ if BACKEND_URL := st.text_input("Ingresa el link de la API que desplegamos previ
                     })
                     
                     execute_again = True
-                
-    
-    
+else:
+    st.text("Se necesitan los datos de tu API!")
     
